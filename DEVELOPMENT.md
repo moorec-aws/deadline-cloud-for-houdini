@@ -1,48 +1,37 @@
 # Development documentation
 
+This documentation provides guidance on developer workflows for working with the code in this repository.
+
+Table of Contents:
+
+* [The Development Loop](#the-development-loop)
+* [Submitter Development Workflow](#submitter-development-workflow)
+* [Application Interface Adaptor Development Workflow](#application-interface-adaptor-development-workflow)
+
 This package has two active branches:
 
 - `mainline` -- For active development. This branch is not intended to be consumed by other packages. Any commit to this branch may break APIs, dependencies, and so on, and thus break any consumer without notice.
 - `release` -- The official release of the package intended for consumers. Any breaking releases will be accompanied with an increase to this package's interface version.
 
-## Build / Test / Release
 
-### Build the package
+## The Development Loop
 
-```bash
-hatch build
-```
+We have configured [hatch](https://github.com/pypa/hatch) commands to support a standard development loop. You can run the following
+from any directory of this repository:
 
-### Run tests
+* `hatch build` - To build the installable Python wheel and sdist packages into the `dist/` directory.
+* `hatch run test` - To run the PyTest unit tests found in the `test/unit` directory. See [Testing](#testing).
+* `hatch run all:test` - To run the PyTest unit tests against all available supported versions of Python.
+* `hatch run lint` - To check that the package's formatting adheres to our standards.
+* `hatch run fmt` - To automatically reformat all code to adhere to our formatting standards.
+* `hatch shell` - Enter a shell environment that will have Python set up to import your development version of this package.
+* `hatch env prune` - Delete all of your isolated workspace [environments](https://hatch.pypa.io/1.12/environment/)
+   for this package.
+* `hatch run install` - A development version of the Deadline Cloud node is then available in `/out` by pressing TAB, typing `deadline`, and adding it to the network.
 
-```bash
-hatch run test
-```
-
-### Run linting
-
-```bash
-hatch run lint
-```
-
-### Run formatting
-
-```bash
-hatch run fmt
-```
-
-## Run tests for all supported Python versions
-
-```bash
-hatch run all:test
-```
-
-## Use development Submitter in Houdini
-
-```bash
-hatch run install
-```
-A development version of the Deadline Cloud node is then available in `/out` by pressing TAB, typing `deadline`, and adding it to the network.
+Note: Hatch uses [environments](https://hatch.pypa.io/1.12/environment/) to isolate the Python development workspace
+for this package from your system or virtual environment Python. If your build/test run is not making sense, then
+sometimes pruning (`hatch env prune`) all of these environments for the package can fix the issue.
 
 ## Submitter Development Workflow
 
@@ -71,6 +60,18 @@ This workflow creates a "houdini package", a JSON file which tells Houdini where
    ```
 
 5. (Optional) To edit the deadline_cloud hda, go to Assets > Asset Manager. Under Operator Type Libraries > Current HIP File, you will find "Driver/deadline_cloud". Right click, select Type Properties. From the Parameter tab you can modify the parameter interface, as you hit Apply you will see that the "DialogScript" file in the hda source files has been updated.
+
+## How to use the Houdini Submitter
+
+1. After installing the houdini submitter, the Deadline Cloud panel is available as an output node. Goto the `Network View` panel, select the `out` Output network. Right click, and type in `Deadline` to reveal the `Deadline` node. Drag the deadline node into the output network and connect it to the renderer. Connect the render node's output to the `Deadline Cloud` node for association.
+
+Select the `Deadline Cloud` node to reveal the Deadline Job Submission panel. Users can either "Save Bundle" for later submission to `Deadline Cloud`, or `Submit` to immediately submit the render to the farm. 
+
+Also, please review the `Job Attachments` panel if all required scene assets are populated. To update the set of assets, click `Parse Files` to refresh.
+
+For more information about Houdini Plugins, please refer to Houdini's [Reference](https://www.sidefx.com/docs/houdini/ref/plugins.html) and on Render Nodes (ROPs) [Reference](https://www.sidefx.com/docs/houdini/nodes/out/index.html).
+
+For more information about `Network View` in Houdini, please refer to Houdini's [Documentation](https://www.sidefx.com/docs/houdini/network/navigate.html) and [QuickStart](https://www.sidefx.com/tutorials/network-view/).
 
 ## Application Interface Adaptor Development Workflow
 
