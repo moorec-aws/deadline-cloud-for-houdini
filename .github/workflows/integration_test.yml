@@ -16,8 +16,20 @@ jobs:
   #    branch: mainline
   #    environment: mainline
   #    os: linux
-  MainlineWindowsIntegrationTest:
-    name: Windows Integration Test
+  #MainlineWindowsIntegrationTest:
+  #  name: Windows Integration Test
+  #  permissions:
+  #    id-token: write
+  #    contents: read
+  #  uses: moorec-aws/.github/.github/workflows/reusable_integration_test.yml@mainline
+  #  secrets: inherit
+  #  with:
+  #    repository: ${{ github.event.repository.name }}
+  #    branch: mainline
+  #    environment: mainline
+  #    os: windows
+  MainlineMacOsIntegrationTest:
+    name: MacOS Integration Test
     permissions:
       id-token: write
       contents: read
@@ -27,4 +39,4 @@ jobs:
       repository: ${{ github.event.repository.name }}
       branch: mainline
       environment: mainline
-      os: windows
+      os: macos
