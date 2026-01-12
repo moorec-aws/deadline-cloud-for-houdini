@@ -22,7 +22,7 @@ permissions:
 
 jobs:
   TagRelease:
-    uses: aws-deadline/.github/.github/workflows/reusable_tag_release.yml@mainline
+    uses: moorec-aws/.github/.github/workflows/reusable_tag_release.yml@mainline
     secrets: inherit
     with:
       tag: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || '' }}
@@ -34,48 +34,25 @@ jobs:
     with:
       tag: ${{ needs.TagRelease.outputs.tag }}
 
-  LinuxIntegrationTest:
+  IntegrationTests:
     needs: [TagRelease, UnitTests]
-    name: Linux Integration Tests
+    name: ${{ matrix.os }} Integration Tests
     permissions:
       id-token: write
       contents: read
-    uses: aws-deadline/.github/.github/workflows/reusable_integration_test.yml@mainline
+    strategy:
+      matrix:
+        os: [linux, windows, macos]
+    uses: moorec-aws/.github/.github/workflows/reusable_integration_test.yml@mainline
     secrets: inherit
     with:
       repository: ${{ github.event.repository.name }}
       tag: ${{ needs.TagRelease.outputs.tag }}
-      os: linux
-
-  WindowsIntegrationTest:
-    needs: [TagRelease, UnitTests]
-    name: Windows Integration Tests
-    permissions:
-      id-token: write
-      contents: read
-    uses: aws-deadline/.github/.github/workflows/reusable_integration_test.yml@mainline
-    secrets: inherit
-    with:
-      repository: ${{ github.event.repository.name }}
-      tag: ${{ needs.TagRelease.outputs.tag }}
-      os: windows
-
-  MacOsIntegrationTest:
-    needs: [TagRelease, UnitTests]
-    name: MacOS Integration Tests
-    permissions:
-      id-token: write
-      contents: read
-    uses: aws-deadline/.github/.github/workflows/reusable_integration_test.yml@mainline
-    secrets: inherit
-    with:
-      repository: ${{ github.event.repository.name }}
-      tag: ${{ needs.TagRelease.outputs.tag }}
-      os: macos
+      os: ${{ matrix.os }}
 
   PreRelease:
-      needs: [TagRelease, UnitTests, LinuxIntegrationTest, WindowsIntegrationTest, MacOsIntegrationTest]
-      uses: aws-deadline/.github/.github/workflows/reusable_prerelease.yml@mainline
+      needs: [TagRelease, UnitTests, IntegrationTests]
+      uses: moorec-aws/.github/.github/workflows/reusable_prerelease.yml@mainline
       permissions:
         id-token: write
         contents: write
@@ -85,7 +62,7 @@ jobs:
 
   BuildInstaller:
     needs: [TagRelease, PreRelease]
-    uses: aws-deadline/.github/.github/workflows/reusable_build_installers.yml@mainline
+    uses: moorec-aws/.github/.github/workflows/reusable_build_installers.yml@mainline
     secrets: inherit
     permissions:
       id-token: write
@@ -99,7 +76,7 @@ jobs:
 
   Publish:
       needs: [TagRelease, BuildInstaller]
-      uses: aws-deadline/.github/.github/workflows/reusable_publish_python.yml@mainline
+      uses: moorec-aws/.github/.github/workflows/reusable_publish_python.yml@mainline
       permissions:
         id-token: write
       secrets: inherit
@@ -117,7 +94,7 @@ jobs:
 
   ReleaseInstaller:
     needs: [TagRelease, IsCondaReady]
-    uses: aws-deadline/.github/.github/workflows/reusable_release_installers.yml@mainline
+    uses: moorec-aws/.github/.github/workflows/reusable_release_installers.yml@mainline
     secrets: inherit
     permissions:
       id-token: write
@@ -129,7 +106,7 @@ jobs:
 
   Release:
       needs: [TagRelease, ReleaseInstaller]
-      uses: aws-deadline/.github/.github/workflows/reusable_release.yml@mainline
+      uses: moorec-aws/.github/.github/workflows/reusable_release.yml@mainline
       secrets: inherit
       permissions:
         id-token: write

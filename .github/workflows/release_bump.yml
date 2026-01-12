@@ -19,7 +19,7 @@ concurrency:
 jobs:
   Bump:
     name: Version Bump
-    uses: aws-deadline/.github/.github/workflows/reusable_bump.yml@mainline
+    uses: moorec-aws/.github/.github/workflows/reusable_bump.yml@mainline
     permissions:
       contents: write
       pull-requests: write
