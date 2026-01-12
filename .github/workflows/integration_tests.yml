@@ -27,7 +27,7 @@ on:
       
 jobs:  
   IntegrationTests:
-    name: ${{ matrix.os }} Integration Tests
+    name: ${{ matrix.name }} Integration Tests
     permissions:
       id-token: write
       contents: read
