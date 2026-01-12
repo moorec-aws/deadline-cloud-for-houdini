@@ -26,39 +26,18 @@ on:
       
       
 jobs:  
-  MainlineLinuxIntegrationTest:
-    name: Linux Integration Tests
+  IntegrationTests:
+    name: ${{ matrix.os }} Integration Tests
     permissions:
       id-token: write
       contents: read
-    uses: aws-deadline/.github/.github/workflows/reusable_integration_test.yml@mainline
+    strategy:
+      matrix:
+        os: [linux, windows, macos]
+    uses: moorec-aws/.github/.github/workflows/reusable_integration_test.yml@mainline
     secrets: inherit
     with:
       repository: ${{ github.event.repository.name }}
       branch: ${{ (github.event.inputs.ref_type == 'branch' && github.event.inputs.branch) || (github.event_name == 'push' && 'mainline') || 'mainline' }}
       tag: ${{ github.event.inputs.ref_type == 'tag' && github.event.inputs.tag || '' }}
-      os: linux
-  MainlineWindowsIntegrationTest:
-    name: Windows Integration Tests
-    permissions:
-      id-token: write
-      contents: read
-    uses: aws-deadline/.github/.github/workflows/reusable_integration_test.yml@mainline
-    secrets: inherit
-    with:
-      repository: ${{ github.event.repository.name }}
-      branch: ${{ (github.event.inputs.ref_type == 'branch' && github.event.inputs.branch) || (github.event_name == 'push' && 'mainline') || 'mainline' }}
-      tag: ${{ github.event.inputs.ref_type == 'tag' && github.event.inputs.tag || '' }}
-      os: windows
-  MainlineMacOsIntegrationTest:
-    name: MacOS Integration Tests
-    permissions:
-      id-token: write
-      contents: read
-    uses: aws-deadline/.github/.github/workflows/reusable_integration_test.yml@mainline
-    secrets: inherit
-    with:
-      repository: ${{ github.event.repository.name }}
-      branch: ${{ (github.event.inputs.ref_type == 'branch' && github.event.inputs.branch) || (github.event_name == 'push' && 'mainline') || 'mainline' }}
-      tag: ${{ github.event.inputs.ref_type == 'tag' && github.event.inputs.tag || '' }}
-      os: macos
+      os: ${{ matrix.os }}
