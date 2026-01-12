@@ -33,7 +33,13 @@ jobs:
       contents: read
     strategy:
       matrix:
-        os: [linux, windows, macos]
+        include:
+          - os: linux
+            name: Linux
+          - os: windows
+            name: Windows
+          - os: macos
+            name: MacOS
     uses: moorec-aws/.github/.github/workflows/reusable_integration_test.yml@mainline
     secrets: inherit
     with:
